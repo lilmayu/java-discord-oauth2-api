@@ -11,9 +11,6 @@ on:
         description: If the commit you want to test isn't the head of a branch, provide its SHA here
         required: false
 
-permissions:
-  contents: read
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -38,3 +35,29 @@ jobs:
           distribution: 'temurin'
       - name: Test
         run: ./gradlew test
+      - name: Create badges dir if necessary
+        run: mkdir -p .github/badges
+      - name: Generate JaCoCo Badge
+        uses: cicirello/jacoco-badge-generator@v2
+        with:
+          jacoco-csv-file: build/reports/jacoco/test/jacocoTestReport.csv
+          coverage-badge-filename: jacoco.svg
+      - name: Log coverage percentage
+        run: |
+          echo "coverage = ${{ steps.jacoco.outputs.coverage }}"
+          echo "branch coverage = ${{ steps.jacoco.outputs.branches }}"
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+      - name: Commit badge
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .github/badges/jacoco.svg
+          git commit -m "Add/Update Jacoco badge"
+      - name: Push badge commit
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ steps.extract_branch.outputs.branch }}

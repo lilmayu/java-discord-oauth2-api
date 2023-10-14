@@ -1,4 +1,5 @@
 # Java Wrapper for Discord's OAuth2 API
+![Coverage](.github/badges/jacoco.svg)
 
 Simple and lightweight Java wrapper for Discord's OAuth2 API.
 

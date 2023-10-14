@@ -104,8 +104,8 @@ publishing {
         repositories {
             maven {
                 credentials {
-                    username = "$ossrhUsername"
-                    password = "$ossrhPassword"
+                    username = project.properties['ossrhUsername'] ?: System.getenv('ossrhUsername')
+                    password = project.properties['ossrhPassword'] ?: System.getenv('ossrhPassword')
                 }
 
                 url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
@@ -123,8 +123,8 @@ nexusPublishing {
         sonatype {
             nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
             snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
-            username = "$ossrhUsername"
-            password = "$ossrhPassword"
+            username = project.properties['ossrhUsername'] ?: System.getenv('ossrhUsername')
+            password = project.properties['ossrhPassword'] ?: System.getenv('ossrhPassword')
         }
     }
 }

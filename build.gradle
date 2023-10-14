@@ -54,6 +54,12 @@ test {
 shadowJar {
 }
 
+tasks.jacocoTestReport {
+    reports {
+        csv.required = true
+    }
+}
+
 // Maven publishing
 
 publishing {

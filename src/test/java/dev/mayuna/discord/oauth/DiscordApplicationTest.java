@@ -11,7 +11,7 @@ public class DiscordApplicationTest {
     private final String clientId = "1234";
     private final String clientSecret = "5678";
     private final String redirectUrl = "https://localhost:8080";
-    private final String[] scopes = new String[] {"identify", "guilds"};
+    private final String[] scopes = new String[]{"identify", "guilds"};
 
     @Test
     public void testBuilder() {
@@ -32,7 +32,7 @@ public class DiscordApplicationTest {
         Assertions.assertEquals("1234", application.getClientId());
         Assertions.assertEquals("5678", application.getClientSecret());
         Assertions.assertEquals("https://localhost:8080", application.getRedirectUrl());
-        Utils.AssertStringArraysEquals(new String[] {"identify", "guilds"}, application.getScopes());
+        Utils.AssertStringArraysEquals(new String[]{"identify", "guilds"}, application.getScopes());
         Assertions.assertEquals(factory, application.getAuthorizationUrlFactory());
 
         Assertions.assertEquals(clientId, builder.getClientId());
@@ -80,7 +80,7 @@ public class DiscordApplicationTest {
         Assertions.assertEquals("1234", application.getClientId());
         Assertions.assertEquals("5678", application.getClientSecret());
         Assertions.assertEquals("https://localhost:8080", application.getRedirectUrl());
-        Utils.AssertStringArraysEquals(new String[] {"identify", "guilds"}, application.getScopes());
+        Utils.AssertStringArraysEquals(new String[]{"identify", "guilds"}, application.getScopes());
         Assertions.assertEquals(factory, application.getAuthorizationUrlFactory());
     }
 
@@ -92,5 +92,36 @@ public class DiscordApplicationTest {
         Assertions.assertThrows(NullPointerException.class, () -> new DiscordApplication(apiUrl, null, clientSecret, redirectUrl, null, (String) null));
         Assertions.assertThrows(NullPointerException.class, () -> new DiscordApplication(apiUrl, clientId, null, redirectUrl, null, (String) null));
         Assertions.assertThrows(NullPointerException.class, () -> new DiscordApplication(apiUrl, clientId, clientSecret, null, null, (String) null));
+    }
+
+    @Test
+    public void testCreateAuthorizationUrl() {
+        DiscordApplication.Builder builder = new DiscordApplication.Builder();
+
+        DiscordOAuthAuthorizationUrlFactory factory = new DiscordOAuthAuthorizationUrlFactory();
+
+        builder.withApiUrl("https://discord.com/api");
+        builder.withClientId("1234");
+        builder.withClientSecret("5678");
+        builder.withRedirectUrl("https://localhost:8080");
+        builder.withScopes("identify", "guilds");
+        builder.withAuthorizationUrlFactory(factory);
+
+        DiscordApplication application = builder.build();
+
+        Assertions.assertEquals(
+                factory.createAuthorizationUrl(application),
+                application.createAuthorizationUrl()
+        );
+
+        Assertions.assertEquals(
+                factory.createAuthorizationUrl(application, "state"),
+                application.createAuthorizationUrl("state")
+        );
+
+        Assertions.assertEquals(
+                factory.createAuthorizationUrl(application, "state", "code"),
+                application.createAuthorizationUrl("state", "code")
+        );
     }
 }

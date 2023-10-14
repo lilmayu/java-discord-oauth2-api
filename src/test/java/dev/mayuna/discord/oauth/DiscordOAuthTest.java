@@ -47,6 +47,11 @@ public class DiscordOAuthTest {
     }
 
     @Test
+    public void testNullInConstructor() {
+        Assertions.assertThrows(NullPointerException.class, () -> new DiscordOAuth(null));
+    }
+
+    @Test
     public void testFetchingWithNulls() {
         Assertions.assertThrows(NullPointerException.class, () -> discordOAuth.fetchAccessToken(null).sendAsync().join());
         Assertions.assertThrows(NullPointerException.class, () -> discordOAuth.refreshAccessToken(null).sendAsync().join());

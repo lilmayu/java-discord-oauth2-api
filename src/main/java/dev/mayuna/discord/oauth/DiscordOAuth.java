@@ -23,9 +23,6 @@ public class DiscordOAuth implements WrappedApi {
         this.application = application;
     }
 
-    /**
-     * @inheritDoc
-     */
     @Override
     public String getDefaultUrl() {
         return application.getApiUrl();

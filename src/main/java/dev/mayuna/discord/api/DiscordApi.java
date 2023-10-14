@@ -48,6 +48,8 @@ public class DiscordApi implements WrappedApi {
      * href="https://discord.com/developers/docs/resources/user#get-current-user">Discord's documentation</a>).<br>Required scope: {@code identify}
      * (and for email and verified filed: {@code email})
      *
+     * @param accessToken Access token of the user.
+     *
      * @return The API request.
      */
     public ApiRequest<DiscordUser> fetchUser(@NonNull String accessToken) {

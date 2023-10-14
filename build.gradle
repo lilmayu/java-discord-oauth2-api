@@ -1,6 +1,11 @@
 plugins {
     id 'java'
     id 'jacoco'
+    id 'java-library'
+    id 'signing'
+    id 'maven-publish'
+    id "com.github.johnrengelman.shadow" version "7.1.2"
+    id "io.github.gradle-nexus.publish-plugin" version "1.1.0"
 }
 
 group = 'dev.mayuna'
@@ -34,7 +39,99 @@ dependencies {
     testImplementation("io.javalin:javalin:5.6.1")
 }
 
+// Tasks
+
+task publishCloseAndRelease() {
+    dependsOn 'publishToSonatype'
+    //dependsOn 'closeAndReleaseSonatypeStagingRepository'
+}
+
 test {
     useJUnitPlatform()
     finalizedBy jacocoTestReport
+}
+
+shadowJar {
+}
+
+// Maven publishing
+
+publishing {
+
+    publications {
+        shadow(MavenPublication) {
+            groupId = 'dev.mayuna'
+            artifactId = 'java-discord-oauth2-api'
+            version = getVersion()
+            from components.java
+
+            pom {
+                name = 'java-discord-oauth2-api'
+                description = 'Java Discord OAuth2 API Wrapper'
+                url = 'https://github.com/lilmayu/java-discord-oauth2-api'
+
+                scm {
+                    connection = 'scm:https://github.com/lilmayu/java-discord-oauth2-api'
+                    developerConnection = 'scm:git:https://github.com/lilmayu/java-discord-oauth2-api.git'
+                    url = 'https://github.com/lilmayu/java-discord-oauth2-api'
+                }
+
+                licenses {
+                    license {
+                        name = 'Apache License, Version 2.0'
+                        url = 'https://www.apache.org/licenses/LICENSE-2.0'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'mayuna'
+                        name = 'Marek Lof'
+                        email = 'uwulilmayu@gmail.com'
+                    }
+                }
+            }
+        }
+    }
+
+    publishing {
+        repositories {
+            maven {
+                credentials {
+                    username = "$ossrhUsername"
+                    password = "$ossrhPassword"
+                }
+
+                url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+            }
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.shadow
+}
+
+nexusPublishing {
+    repositories {
+        sonatype {
+            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+            username = "$ossrhUsername"
+            password = "$ossrhPassword"
+        }
+    }
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+shadowJar.dependsOn javadocJar
+shadowJar.dependsOn sourcesJar
+shadowJar.dependsOn jar
+
+components.java.withVariantsFromConfiguration(configurations.shadowRuntimeElements) {
+    skip()
 }

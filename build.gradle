@@ -1,0 +1,40 @@
+plugins {
+    id 'java'
+    id 'jacoco'
+}
+
+group = 'dev.mayuna'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Simple API Wrapper
+    implementation 'dev.mayuna:simple-java-api-wrapper:2.2'
+
+    // GSON
+    implementation 'com.google.code.gson:gson:2.10'
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+    testCompileOnly 'org.projectlombok:lombok:1.18.24'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
+
+    // JetBrain's Annotations
+    compileOnly 'org.jetbrains:annotations:20.1.0'
+
+    // JUnit
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+
+    // Javalin (for testing)
+    testImplementation("io.javalin:javalin:5.6.1")
+}
+
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}

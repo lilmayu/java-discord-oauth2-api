@@ -50,13 +50,19 @@ jobs:
         shell: bash
         run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
         id: extract_branch
+      - name: Check if there are any changes
+        id: verify_diff
+        run: |
+          git diff --quiet .github/badges/jacoco.svg || echo "changed=true" >> $GITHUB_OUTPUT
       - name: Commit badge
+        if: steps.verify_diff.outputs.changed == 'true'
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add .github/badges/jacoco.svg
           git commit -m "Add/Update Jacoco badge"
       - name: Push badge commit
+        if: steps.verify_diff.outputs.changed == 'true'
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

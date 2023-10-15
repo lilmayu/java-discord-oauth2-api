@@ -43,7 +43,7 @@ dependencies {
 
 task publishCloseAndRelease() {
     dependsOn 'publishToSonatype'
-    //dependsOn 'closeAndReleaseSonatypeStagingRepository'
+    dependsOn 'closeAndReleaseSonatypeStagingRepository'
 }
 
 test {

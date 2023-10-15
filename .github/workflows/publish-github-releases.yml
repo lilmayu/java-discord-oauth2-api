@@ -1,12 +1,13 @@
-name: 'Publish to MavenCentral'
+name: 'Publish to GitHub Releases'
 
 on:
   push:
     tags:
       - '**'
+  workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   test:
@@ -30,5 +31,12 @@ jobs:
         with:
           java-version: '11'
           distribution: 'temurin'
-      - name: Publish, Close, and Release to MavenCentral
-        run: ./gradlew publishCloseAndRelease
+      - name: Build
+        run: ./gradlew shadowJar
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            build/libs/java-discord-oauth2-api-*.jar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

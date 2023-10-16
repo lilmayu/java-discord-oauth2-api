@@ -63,7 +63,7 @@ discordOAuth.revokeTokens("access_token").send();
 ```
 
 Notes:
-1. This defaults to `DiscordApiUrls.DEFAULT`. However, you can specify your own URL if you want to.
+1. This defaults to `DiscordApi.DEFAULT_API_URL`. However, you can specify your own URL if you want to.
 2. This is the client ID of your application. You can find it in the [Discord Developer Portal](https://discord.com/developers/applications).
 3. This is the client secret of your application. You can find it in the [Discord Developer Portal](https://discord.com/developers/applications).
 4. This is the redirect URI of your application. You can find it in the [Discord Developer Portal](https://discord.com/developers/applications).
